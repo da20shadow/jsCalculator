@@ -15,13 +15,13 @@
         <div class="calculator-grid">
 
             <!--Display -->
-            <div class="display">
-                <div data-previous class="previous">123 + 123</div>
-                <div data-current class="current">246</div>
+            <div class="display" style="min-height: 19vh;">
+                <div data-previous class="previous"></div>
+                <div data-current class="current"></div>
             </div>
 
             <button data-clear class="c item">C</button>
-            <button data-delete class="del item">Del</button>
+            <button id="del" class="del item">Del</button>
             <button data-operator class="division item">/</button>
             <button data-number class="one item">1</button>
             <button data-number class="two item">2</button>
@@ -35,10 +35,9 @@
             <button data-number class="eight item">8</button>
             <button data-number class="nine item">9</button>
             <button data-operator class="sub item">-</button>
-            <button data-operator class="point item">.</button>
+            <button data-number class="point item">.</button>
             <button data-number class="zero item">0</button>
-            <button data-equals class="sum item">=</button>
-
+            <button id="equals" class="sum item">=</button>
 
         </div>
 

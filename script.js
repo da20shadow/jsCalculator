@@ -1,124 +1,176 @@
-class Calculator{
-    constructor(previous,current){
-        this.previous = previous;
+class Calculator {
+    constructor(current,previous,firstNumbersArray,secondNumbersArray){
         this.current = current;
-        this.clear();
+        this.previous = previous;
+        this.firstNumbersArray = firstNumbersArray;
+        this.secondNumbersArray = secondNumbersArray;
     }
     clear(){
-        this.current = "";
-        this.previous = "";
-        this.operators = undefined;
+        this.current.innerHTML = "";
+        this.previous.innerHTML = "";
+        this.firstNumbersArray = [];
+        this.secondNumbersArray = [];
     }
     delete(){
-        this.current = this.current.toString().slice(0, -1);
-    }
-    appendNumber(number){
-        if(number === "." && this.current.includes(".")){
-            return;
-        }
-        this.current = this.current.toString() + number.toString();
-    }
-    getOperation(operator){
-        if(this.current === ""){
-            return;
-        }
-        if(this.previous !== ""){
-            this.compute();
-        }
-        this.operator = operations[operator];
-        this.previous = this.current;
-        this.current = "";
-    }
-    compute(){
-        let computation;
-        const prev = parseFloat(this.previous);
-        const current = parseFloat(this.current);
+        console.log("Will delete the last element!");
 
-        if(isNan(prev) || isNaN(current)){return;}
+        if(this.firstNumbersArray.includes("*")){
+            console.log("The first Array contains *")
 
-        switch(this.operation){
-            case "+":
-                computation = prev + current;
-                break;
-            case "-":
-                computation = prev - current;
-                break;
-            case "*":
-                computation = prev * current;
-                break;
-            case "/":
-                computation = prev / current;
-                break;
-            default:
-                    return;
-        }
-        this.current = computation;
-        this.operation = undefined;
-        this.previous = "";
-    }
-    getDisplayNumber(number) {
-        const stringNumber = number.toString()
-        const integerDigits = parseFloat(stringNumber.split('.')[0])
-        const decimalDigits = stringNumber.split('.')[1]
-        let integerDisplay;
-        if (isNaN(integerDigits)) {
-          integerDisplay = '';
-        } else {
-          integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
-        }
-        if (decimalDigits != null) {
-          return `${integerDisplay}.${decimalDigits}`
-        } else {
-          return integerDisplay
-        }
-      }
-    updateDisplayedValue(){
-        this.current.innerText = this.getDisplayNumber(this.currentOperand);
-        if (this.operation != null) {
-            this.previous.innerText = `${this.getDisplayNumber(this.previous)} ${this.operation}`;
+            this.secondNumbersArray.pop();
+
+            let c = this.previous.innerHTML;
+
+            c = c.substring(0, c.length - 1);
+
+            console.log(`This is the c ${c}`);
+
+            this.previous.innerHTML = c.toString();
         }else{
-            this.previous.innerText = "";
+            let deletedElement = this.firstNumbersArray.pop();
+            console.log(`Last element >${deletedElement}< of the first array is deleted!`);
+
+            let c = this.previous.innerHTML;
+
+            c = c.substring(0, c.length - 1);
+
+            console.log(`This is the c ${c}`);
+
+            this.previous.innerHTML = c.toString();
         }
+    }
+    addNumber(number){
+
+        if(this.firstNumbersArray.length == 0){
+            this.clear();
+            this.firstNumbersArray.push(number.toString());
+            this.previous.innerHTML = number.toString();
+
+        }else if (this.firstNumbersArray.length > 0 && this.firstNumbersArray.includes("*")
+        || this.firstNumbersArray.includes("/") || this.firstNumbersArray.includes("-")
+        || this.firstNumbersArray.includes("+")){
+
+            let c = this.previous.innerHTML;
+
+            this.secondNumbersArray.push(number.toString());
+
+            this.previous.innerHTML = c.toString() + number.toString();
+            console.log(`Added ${number}`);
+        }else{
+
+            let c = this.previous.innerHTML;
+            this.previous.innerHTML = c.toString() + number.toString();
+            console.log(`Added ${number}`);
+
+            this.firstNumbersArray.push(number.toString());
+        }
+    }
+
+    showResult(){
+
+        console.log("Clicked Equals Button!");
+
+        let firstNum = 0;
+        let secondNum = 0;
+        let operator = undefined;
+
+        let firstIsDone = false;
+
+        for (let num of this.firstNumbersArray){
+        
+            if(num.toString() === "*" || num.toString() === "/"
+            || num.toString() === "+" || num.toString() === "-"){
+                firstIsDone = true;
+            }else{
+                if(firstNum === 0){
+                    firstNum = num.toString();
+                }else{
+                    firstNum += num.toString(); 
+                }
+            }
+            if (firstIsDone){
+                console.log(`First num is finished ${firstNum}`);
+                break;
+            }
+        }
+        for (let sNum of this.secondNumbersArray){
+                if(secondNum === 0){
+                    secondNum = sNum.toString();
+                }else{
+                    secondNum += sNum.toString(); 
+                }
+        }
+
+
+        let result;
+
+        if (this.firstNumbersArray.includes("*")){
+
+            result = Number(firstNum) * Number(secondNum);
+
+        }else if (this.firstNumbersArray.includes("/")){
+            
+            result = Number(firstNum) / Number(secondNum);
+
+        }else if (this.firstNumbersArray.includes("+")){
+           
+            result = Number(firstNum) + Number(secondNum);
+
+        }else if (this.firstNumbersArray.includes("-")){
+            
+            result = Number(firstNum) - Number(secondNum);
+
+        }else{
+            result = NaN;
+        }
+
+    
+        this.current.innerHTML = result;
+
+        console.log(`First Number = ${firstNum} Second Number = ${secondNum}
+        And Result = ${result}`);
+
+        this.firstNumbersArray = [];
+        this.secondNumbersArray = [];
     }
 }
 
-const numbers = document.querySelectorAll('[data-number]');
-const operators = document.querySelectorAll('[data-operator]');
+//array
+let firstNumbersArray = [];
+let secondNumbersArray = [];
 
-const clear = document.querySelector('[data-clear]');
-const del = document.querySelector('[data-delete]');
-const equals = document.querySelector('[data-equals]');
+let current = document.querySelector("[data-current]");
+let previous = document.querySelector("[data-previous]");
 
-const previous = document.querySelector('[data-previous]');
-const current = document.querySelector('[data-current]');
+let calculator = new Calculator(current,previous,firstNumbersArray,secondNumbersArray);
 
-const calculator = new Calculator(previous, current);
+let clearBtn = document.querySelector('[data-clear]');
+clearBtn.addEventListener("click", function (){
+    calculator.clear();
+});
 
-numbers.forEach(button => {
+let numbersBtn = document.querySelectorAll('[data-number]');
+
+numbersBtn.forEach(button => {
+button.addEventListener("click", () => {
+calculator.addNumber(button.innerText);
+    })
+});
+
+let operatorsBtn = document.querySelectorAll("[data-operator]");
+
+operatorsBtn.forEach(button => {
     button.addEventListener("click", () => {
-        calculator.appendNumber(button.innerText);
-        calculator.updateDisplayedValue()
+        calculator.addNumber(button.innerText);
     })
 })
 
-operators.forEach(button => {
-    button.addEventListener("click", () => {
-        calculator.getOperation(button.innerText);
-        calculator.updateDisplayedValue();
-    })
-})
+let equals = document.querySelector("#equals");
+equals.addEventListener("click", () => {
+    calculator.showResult();
+});
 
-equals.addEventListener('click', button => {
-    calculator.compute()
-    calculator.updateDisplay()
-  })
-  
-  clear.addEventListener('click', button => {
-    calculator.clear()
-    calculator.updateDisplay()
-  })
-  
-  del.addEventListener('click', button => {
-    calculator.delete()
-    calculator.updateDisplay()
-  })
+let del = document.querySelector("#del");
+del.addEventListener("click", () => {
+    calculator.delete();
+})

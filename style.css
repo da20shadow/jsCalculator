@@ -44,6 +44,7 @@ body {
 }
 
 .display {
+  min-height: 19vh;
   grid-column: 1/-1;
   background: #48575d;
   display: flex;
